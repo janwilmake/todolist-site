@@ -1,20 +1,26 @@
-import { Env, getSponsor, middleware, SponsorDO } from "sponsorflare";
-export { SponsorDO };
+import { Env } from "sponsorflare";
+
 export default {
-  fetch: async (request: Request, env: Env) => {
-    const sponsorflare = await middleware(request, env);
-    if (sponsorflare) return sponsorflare;
-
-    const sponsor = await getSponsor(request, env, {
-      // charges 1 cent
-      charge: 1,
-    });
-
-    if (!sponsor.charged) {
-      return new Response("Payment required", { status: 402 });
+  async fetch(request: Request, env: Env) {
+    const url = new URL(request.url);
+    
+    // Serve static files from the public directory
+    if (url.pathname === "/" || url.pathname === "/index.html") {
+      return new Response(await fetch("public/index.html"), {
+        headers: {
+          "Content-Type": "text/html",
+        },
+      });
     }
 
-    // do something
-    return new Response("Your stuff here");
+    if (url.pathname === "/app.js") {
+      return new Response(await fetch("public/app.js"), {
+        headers: {
+          "Content-Type": "application/javascript",
+        },
+      });
+    }
+
+    return new Response("Not found", { status: 404 });
   },
 };
