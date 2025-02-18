@@ -1,7 +1,5 @@
-import { Env } from "sponsorflare";
-
 export default {
-  async fetch(request: Request, env: Env) {
+  async fetch(request: Request) {
     const url = new URL(request.url);
     
     // Serve static files from the public directory
